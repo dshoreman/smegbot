@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
+	discord "github.com/bwmarrin/discordgo"
 	flag "github.com/ogier/pflag"
 )
 
@@ -33,7 +36,28 @@ func main() {
 	fmt.Println("\nInitialising...")
 
 	if token == "" {
-		fmt.Println("Error: Token must be set. Aborting.")
+		fmt.Println("\nError: Token must be set. Aborting.")
 		os.Exit(1)
 	}
+
+	dg, err := discord.New("Bot " + token)
+	if err != nil {
+		fmt.Println("\nError: Could not create session.\n", err)
+		os.Exit(1)
+	}
+
+	err = dg.Open()
+	if err != nil {
+		fmt.Println("\nError: Could not connect to Discord\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Connected! Press Ctrl-C to exit.")
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sig
+
+	fmt.Println("\n\nDisconnecting...")
+	dg.Close()
+	fmt.Println("Goodbye!")
 }
