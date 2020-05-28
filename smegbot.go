@@ -52,7 +52,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Connected! Press Ctrl-C to exit.")
+	dg.AddHandler(onMessageReceived)
+
+	fmt.Print("Connected! Press Ctrl-C to exit.\n\n")
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sig
@@ -60,4 +62,18 @@ func main() {
 	fmt.Println("\n\nDisconnecting...")
 	dg.Close()
 	fmt.Println("Goodbye!")
+}
+
+func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
+	fmt.Println(m.Author.Username, ":", m.Content)
+
+	// Don't process our own messages
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	if m.Content == "ping" {
+		s.ChannelMessageSend(m.ChannelID, "Pong!")
+		return
+	}
 }
