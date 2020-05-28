@@ -23,3 +23,11 @@ Once you've created an application, replace `CLIENT_ID` in the URL below with yo
 ```
 https://discord.com/api/oauth2/authorize?permissions=268823616&scope=bot&client_id=CLIENT_ID
 ```
+
+## Commands
+
+### `ping`
+Responds with "Pong!" for testing the bot.
+
+### `.roles <user_mention>`
+Lists all the roles that the mentioned user has in the server.

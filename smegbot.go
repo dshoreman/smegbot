@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	discord "github.com/bwmarrin/discordgo"
@@ -74,6 +75,27 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
+		return
+	}
+
+	if len(m.Content) > 7 && m.Content[0:7] == ".roles " {
+		user := m.Mentions[0]
+		nick := fmt.Sprintf("<@%s#%s>", user.Username, user.Discriminator)
+
+		s.ChannelMessageSend(m.ChannelID, "Checking roles for "+nick)
+
+		member, err := s.GuildMember(m.GuildID, user.ID)
+		if err != nil {
+			fmt.Println("\nError: Could not get guild member\n", err)
+			return
+		}
+
+		if len(member.Roles) == 0 {
+			s.ChannelMessageSend(m.ChannelID, "This user has no roles!")
+			return
+		}
+
+		s.ChannelMessageSend(m.ChannelID, "Found roles: "+strings.Join(member.Roles, ", "))
 		return
 	}
 }
