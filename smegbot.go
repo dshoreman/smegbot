@@ -80,13 +80,11 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 
 	if len(m.Content) > 7 && m.Content[0:7] == ".roles " {
 		user := m.Mentions[0]
-		nick := fmt.Sprintf("<@%s#%s>", user.Username, user.Discriminator)
-
-		s.ChannelMessageSend(m.ChannelID, "Checking roles for "+nick)
 
 		member, err := s.GuildMember(m.GuildID, user.ID)
 		if err != nil {
 			fmt.Println("\nError: Could not get guild member\n", err)
+			s.ChannelMessageSend(m.ChannelID, "Are you sure they're still a member?")
 			return
 		}
 
@@ -95,7 +93,22 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, "Found roles: "+strings.Join(member.Roles, ", "))
+		roles := make([]string, len(member.Roles))
+		for i, roleID := range member.Roles {
+			role, err := s.State.Role(m.GuildID, roleID)
+			if err != nil {
+				fmt.Println("\nError: Could not get role\n", err)
+				roles[i] = "•" + roleID
+				continue
+			}
+			roles[i] = fmt.Sprintf("• %s - %s", role.ID, role.Name)
+		}
+
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+			"**@%s#%s has the following roles:**\n%s",
+			user.Username, user.Discriminator,
+			strings.Join(roles, "\n"),
+		))
 		return
 	}
 }
