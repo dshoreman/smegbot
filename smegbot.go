@@ -86,19 +86,34 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-			"Searching %d members for role %s (%s)...",
-			len(members), role.ID, role.Name,
-		))
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Searching %d members...", len(members)))
 
+		withRole := make([]string, 0)
 		for _, member := range members {
-			fmt.Printf("%s: %s\n", member.Nick, strings.Join(member.Roles, ", "))
 			if !memberHasRole(member, role.ID) {
 				continue
 			}
-			s.ChannelMessageSend(m.ChannelID, "Member "+member.Nick+" is a match!")
+
+			nick := ""
+			if member.Nick != "" {
+				nick = "\n  -- " + member.Nick
+			}
+
+			withRole = append(withRole, fmt.Sprintf("• %s: @%s#%s %s",
+				member.User.ID, member.User.Username, member.User.Discriminator, nick,
+			))
 		}
 
+		if len(withRole) > 0 {
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+				"\nThere are %d member(s) with the **@%s** role:\n```\n%s\n```",
+				len(withRole), role.Name, strings.Join(withRole, "\n"),
+			))
+			return
+		}
+
+		s.ChannelMessageSend(m.ChannelID,
+			"None of the members seem to have the **@"+role.Name+"** role. :slight_frown:")
 		return
 	}
 
