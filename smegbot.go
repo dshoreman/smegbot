@@ -73,6 +73,35 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 		return
 	}
 
+	if len(m.Content) > 9 && m.Content[0:9] == ".members " {
+		role, err := s.State.Role(m.GuildID, m.MentionRoles[0])
+		if err != nil {
+			fmt.Println("\nError: Could not get role\n", err)
+			return
+		}
+
+		members, err := s.GuildMembers(m.GuildID, "", 1000)
+		if err != nil {
+			fmt.Println("\nError: Failed loading guild members\n", err)
+			return
+		}
+
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+			"Searching %d members for role %s (%s)...",
+			len(members), role.ID, role.Name,
+		))
+
+		for _, member := range members {
+			fmt.Printf("%s: %s\n", member.Nick, strings.Join(member.Roles, ", "))
+			if !memberHasRole(member, role.ID) {
+				continue
+			}
+			s.ChannelMessageSend(m.ChannelID, "Member "+member.Nick+" is a match!")
+		}
+
+		return
+	}
+
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 		return
@@ -111,4 +140,13 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 		))
 		return
 	}
+}
+
+func memberHasRole(member *discord.Member, role string) bool {
+	for _, current := range member.Roles {
+		if current == role {
+			return true
+		}
+	}
+	return false
 }

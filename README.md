@@ -26,6 +26,9 @@ https://discord.com/api/oauth2/authorize?permissions=268823616&scope=bot&client_
 
 ## Commands
 
+### `.members <role_mention>`
+Lists all the server members that have the given role assigned.
+
 ### `ping`
 Responds with "Pong!" for testing the bot.
 
