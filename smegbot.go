@@ -106,7 +106,7 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 
 		if len(withRole) > 0 {
 			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-				"\nThere are %d member(s) with the **@%s** role:\n```\n%s\n```",
+				"\nThere are **%d** member(s) with the **@%s** role:\n```\n%s\n```",
 				len(withRole), role.Name, strings.Join(withRole, "\n"),
 			))
 			return
@@ -142,16 +142,16 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 			role, err := s.State.Role(m.GuildID, roleID)
 			if err != nil {
 				fmt.Println("\nError: Could not get role\n", err)
-				roles[i] = "•" + roleID
+				roles[i] = "• " + roleID
 				continue
 			}
-			roles[i] = fmt.Sprintf("• %s - %s", role.ID, role.Name)
+			roles[i] = fmt.Sprintf("• %s: @%s", role.ID, role.Name)
 		}
 
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-			"**@%s#%s has the following roles:**\n%s",
+			"**@%s#%s** has the following **%d** roles:\n```\n%s\n```",
 			user.Username, user.Discriminator,
-			strings.Join(roles, "\n"),
+			len(roles), strings.Join(roles, "\n"),
 		))
 		return
 	}
