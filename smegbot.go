@@ -147,6 +147,31 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 		return
 	}
 
+	if len(m.Content) > 9 && m.Content[0:9] == ".restore " {
+		sinbin := ""
+		guildRoles, _ := s.GuildRoles(m.GuildID)
+		for _, role := range guildRoles {
+			if role.Name == "Quarantine" {
+				sinbin = role.ID
+			}
+		}
+		if sinbin == "" {
+			s.ChannelMessageSend(m.ChannelID, "I couldn't find the **@Quarantine** role!")
+			return
+		}
+
+		target := m.Mentions[0].ID
+		err := s.GuildMemberRoleRemove(m.GuildID, target, sinbin)
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, "Something went wrong removing the **@Quarantine** role.")
+			fmt.Println("\nError: Could not remove Quarantine role.\n", err)
+			return
+		}
+
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Member @%s is back out of Quarantine!", target))
+		return
+	}
+
 	if len(m.Content) > 7 && m.Content[0:7] == ".roles " {
 		user := m.Mentions[0]
 
