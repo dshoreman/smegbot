@@ -138,7 +138,7 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Member @%s is now in Quarantine!", target))
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> is now in Quarantine.", target))
 		return
 	}
 
@@ -168,7 +168,7 @@ func onMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Member @%s is back out of Quarantine!", target))
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> is back out of Quarantine!", target))
 		return
 	}
 
