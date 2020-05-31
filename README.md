@@ -26,11 +26,17 @@ https://discord.com/api/oauth2/authorize?permissions=268823616&scope=bot&client_
 
 ## Commands
 
-### `.members <role_mention>`
-Lists all the server members that have the given role assigned.
-
 ### `ping`
 Responds with "Pong!" for testing the bot.
 
+### `.members <role_mention>`
+Lists all the server members that have the given role assigned.
+
 ### `.roles <user_mention>`
 Lists all the roles that the mentioned user has in the server.
+
+### `.nuke <user_mention>`
+Gives the `@Quarantine` role to the mentioned user
+
+### `.restore <user_mention>`
+Removes the `@Quarantine` role from the mentioned user

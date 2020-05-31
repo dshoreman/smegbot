@@ -7,51 +7,44 @@ import (
 )
 
 func nuke(s *discord.Session, m *discord.MessageCreate) {
-	sinbin := ""
-	guildRoles, _ := s.GuildRoles(m.GuildID)
-	for _, role := range guildRoles {
-		if role.Name == "Quarantine" {
-			sinbin = role.ID
-		}
+	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
+	if sinbin != "" {
+		target := m.Mentions[0].ID
+		err := s.GuildMemberRoleAdd(m.GuildID, target, sinbin)
+		sendSuccessOrFail(s, m.ChannelID, err, "add", target)
 	}
-	if sinbin == "" {
-		s.ChannelMessageSend(m.ChannelID, "I couldn't find the **@Quarantine** role!")
-		return
-	}
-
-	target := m.Mentions[0].ID
-	err := s.GuildMemberRoleAdd(m.GuildID, target, sinbin)
-	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, "Something went wrong trying to add the **@Quarantine** role.")
-		fmt.Println("\nError: Could not add Quarantine role.\n", err)
-		return
-	}
-
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> is now in Quarantine.", target))
-	return
 }
 
 func restore(s *discord.Session, m *discord.MessageCreate) {
-	sinbin := ""
-	guildRoles, _ := s.GuildRoles(m.GuildID)
-	for _, role := range guildRoles {
-		if role.Name == "Quarantine" {
-			sinbin = role.ID
+	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
+	if sinbin != "" {
+		target := m.Mentions[0].ID
+		err := s.GuildMemberRoleRemove(m.GuildID, target, sinbin)
+		sendSuccessOrFail(s, m.ChannelID, err, "remove", target)
+	}
+
+}
+
+func quarantineRole(s *discord.Session, channelID string, guildID string) string {
+	roles, _ := s.GuildRoles(guildID)
+	for _, r := range roles {
+		if r.Name == "Quarantine" {
+			return r.ID
 		}
 	}
-	if sinbin == "" {
-		s.ChannelMessageSend(m.ChannelID, "I couldn't find the **@Quarantine** role!")
-		return
-	}
+	s.ChannelMessageSend(channelID, "I couldn't find the **@Quarantine** role!")
+	return ""
+}
 
-	target := m.Mentions[0].ID
-	err := s.GuildMemberRoleRemove(m.GuildID, target, sinbin)
+func sendSuccessOrFail(s *discord.Session, channelID string, err error, mode string, target string) {
+	op, result := "adding", "now in Quarantine."
+	if mode == "remove" {
+		op, result = "removing", "back out of Quarantine!"
+	}
 	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, "Something went wrong removing the **@Quarantine** role.")
-		fmt.Println("\nError: Could not remove Quarantine role.\n", err)
+		s.ChannelMessageSend(channelID, "Oops! Couldn't "+op+" the **@Quarantine** role.")
+		fmt.Println("\nError:\n", err)
 		return
 	}
-
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> is back out of Quarantine!", target))
-	return
+	s.ChannelMessageSend(channelID, fmt.Sprintf("<@%s> is %s", target, result))
 }

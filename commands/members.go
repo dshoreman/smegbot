@@ -21,34 +21,14 @@ func listRoleMembers(s *discord.Session, m *discord.MessageCreate) {
 	}
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Searching %d members...", len(members)))
-
-	withRole := make([]string, 0)
-	for _, member := range members {
-		if !memberHasRole(member, role.ID) {
-			continue
-		}
-
-		nick := ""
-		if member.Nick != "" {
-			nick = "\n  -- " + member.Nick
-		}
-
-		withRole = append(withRole, fmt.Sprintf("• %s: @%s#%s %s",
-			member.User.ID, member.User.Username, member.User.Discriminator, nick,
-		))
-	}
+	msg := "None of the members seem to have the **@" + role.Name + "** role. :slight_frown:"
+	withRole := membersWithRole(members, role.ID)
 
 	if len(withRole) > 0 {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-			"\nThere are **%d** member(s) with the **@%s** role:\n```\n%s\n```",
-			len(withRole), role.Name, strings.Join(withRole, "\n"),
-		))
-		return
+		msg = fmt.Sprintf("\nThere are **%d** member(s) with the **@%s** role:\n```\n%s\n```",
+			len(withRole), role.Name, strings.Join(withRole, "\n"))
 	}
-
-	s.ChannelMessageSend(m.ChannelID,
-		"None of the members seem to have the **@"+role.Name+"** role. :slight_frown:")
-	return
+	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
 func memberHasRole(member *discord.Member, role string) bool {
@@ -58,4 +38,22 @@ func memberHasRole(member *discord.Member, role string) bool {
 		}
 	}
 	return false
+}
+
+func membersWithRole(members []*discord.Member, roleID string) []string {
+	m := make([]string, 0)
+	for _, member := range members {
+		if !memberHasRole(member, roleID) {
+			continue
+		}
+
+		nick := ""
+		if member.Nick != "" {
+			nick = "\n  -- " + member.Nick
+		}
+
+		m = append(m, fmt.Sprintf("• %s: @%s#%s %s",
+			member.User.ID, member.User.Username, member.User.Discriminator, nick))
+	}
+	return m
 }
