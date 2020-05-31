@@ -32,6 +32,8 @@ func restore(s *discord.Session, m *discord.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		target := m.Mentions[0].ID
+		restoreRoles(s, m.GuildID, target)
+
 		err := s.GuildMemberRoleRemove(m.GuildID, target, sinbin)
 		sendSuccessOrFail(s, m.ChannelID, err, "remove", target)
 	}
@@ -75,6 +77,19 @@ func removeRoles(s *discord.Session, guildID string, userID string, roles []stri
 	for _, role := range roles {
 		fmt.Printf("Removing role %s...\n", role)
 		s.GuildMemberRoleRemove(guildID, userID, role)
+	}
+}
+
+func restoreRoles(s *discord.Session, guildID string, userID string) {
+	b, err := ioutil.ReadFile(filepath.Join("./storage/guilds", guildID, "members", userID, "roles.json"))
+	if err != nil {
+		fmt.Println("Couldn't read user's roles.json", err)
+		return
+	}
+	roles := make([]string, 0)
+	json.Unmarshal(b, &roles)
+	for _, role := range roles {
+		s.GuildMemberRoleAdd(guildID, userID, role)
 	}
 }
 
