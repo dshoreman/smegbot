@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	discord "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/actions"
 	"github.com/dshoreman/smegbot/commands"
 	flag "github.com/ogier/pflag"
 )
@@ -53,6 +54,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	actions.Register(dg)
 	dg.AddHandler(commands.OnMessageReceived)
 
 	fmt.Print("Connected! Press Ctrl-C to exit.\n\n")
