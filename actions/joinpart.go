@@ -22,7 +22,12 @@ func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
 }
 
 func onPart(s *dg.Session, m *dg.GuildMemberRemove) {
-	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf("<@%s> has left :slight_frown:", m.User.ID))
+	nick := ""
+	if nickIsCached(m.GuildID, m.User.ID) {
+		nick = " (" + currentNick(m.GuildID, m.User.ID) + ")"
+	}
+	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(
+		"<@%s>%s has left :slight_frown:", m.User.ID, nick))
 }
 
 func getChannel(s *dg.Session, guildID string) string {
