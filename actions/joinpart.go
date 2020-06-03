@@ -10,11 +10,12 @@ import (
 )
 
 func onJoin(s *dg.Session, m *dg.GuildMemberAdd) {
-	msg, nick := "<@%s> has joined! :wave:%s", currentNick(m.GuildID, m.User.ID)
+	msg, nick, status := "<@%s> has %s! :wave:%s", currentNick(m.GuildID, m.User.ID), "joined"
 	if nick != "" {
 		nick = "\nYou may remember them as " + nick
+		status = "returned"
 	}
-	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(msg, m.User.ID, nick))
+	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(msg, m.User.ID, status, nick))
 }
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
