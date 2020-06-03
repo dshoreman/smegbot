@@ -8,6 +8,7 @@ import (
 
 	discord "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/actions"
+	"github.com/dshoreman/smegbot/cli"
 	"github.com/dshoreman/smegbot/commands"
 	flag "github.com/ogier/pflag"
 )
@@ -19,6 +20,7 @@ var (
 )
 
 func init() {
+	cli.PrintLogo(version)
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "\nOptions:\n\n")
@@ -30,31 +32,18 @@ func init() {
 }
 
 func main() {
-	fmt.Println("8\"\"\"\"8                    8\"\"\"\"8               ")
-	fmt.Println("8      eeeeeee eeee eeeee 8    8   eeeee eeeee ")
-	fmt.Println("8eeeee 8  8  8 8    8   8 8eeee8ee 8   8   8   ")
-	fmt.Println("    88 8  8  8 8ee  8     88     8 8   8   8   ")
-	fmt.Println("e   88 8  8  8 8    8  \"8 88     8 8   8   8   ")
-	fmt.Println("8eee88 8  8  8 88ee 88ee8 88eeeee8 8eee8   8   ")
-	fmt.Printf("                              Version " + version)
-
-	fmt.Println("\nInitialising...")
-
 	if token == "" {
-		fmt.Println("\nError: Token must be set. Aborting.")
-		os.Exit(1)
+		cli.Die("Token must be set.", nil)
 	}
 
 	dg, err := discord.New("Bot " + token)
 	if err != nil {
-		fmt.Println("\nError: Could not create session.\n", err)
-		os.Exit(1)
+		cli.Die("Could not create session.", err)
 	}
 
 	err = dg.Open()
 	if err != nil {
-		fmt.Println("\nError: Could not connect to Discord\n", err)
-		os.Exit(1)
+		cli.Die("Could not connect to Discord.", err)
 	}
 
 	actions.Register(dg)
