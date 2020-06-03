@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Fixed
+* Compile error caused by missing brace thanks to .todo command in local copy
+* Bad link to v1.0.0 tag in changelog
 
 
 ## [1.0.0] - 2020-06-03
@@ -19,4 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.0.0...develop
-[1.0.0]: https://github.com/dshoreman/smegbot/releases/tag/v0.1.0
+[1.0.0]: https://github.com/dshoreman/smegbot/releases/tag/v1.0.0

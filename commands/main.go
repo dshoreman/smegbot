@@ -50,6 +50,7 @@ func runAll(s *discord.Session, m *discord.MessageCreate) {
 		restore(s, m)
 		return
 	}
+}
 
 func hasPermission(s *discord.Session, m *discord.MessageCreate) (bool, error) {
 	guildID, userID := m.GuildID, m.Author.ID
