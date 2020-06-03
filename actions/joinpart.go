@@ -12,8 +12,12 @@ import (
 func onJoin(s *dg.Session, m *dg.GuildMemberAdd) {
 	msg, nick, status := "<@%s> has %s! :wave:%s", currentNick(m.GuildID, m.User.ID), "joined"
 	if nick != "" {
-		nick = "\nYou may remember them as " + nick
 		status = "returned"
+		if nick == m.User.Username {
+			nick = ""
+		} else {
+			nick = "\nYou may remember them as " + nick
+		}
 	}
 	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(msg, m.User.ID, status, nick))
 }
@@ -28,7 +32,9 @@ func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
 
 func onPart(s *dg.Session, m *dg.GuildMemberRemove) {
 	nick := currentNick(m.GuildID, m.User.ID)
-	if nick != "" {
+	if nick == m.User.Username {
+		nick = ""
+	} else if nick != "" {
 		nick = " (" + nick + ")"
 	}
 	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(
