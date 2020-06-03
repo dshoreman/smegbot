@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	discord "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/cli"
 )
 
 // OnMessageReceived processes incoming messages from Discord to register commands
@@ -27,6 +28,9 @@ func runAll(s *discord.Session, m *discord.MessageCreate) {
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 		return
+	}
+	if m.Content == ".version" {
+		s.ChannelMessageSend(m.ChannelID, "Currently running Smegbot version `"+cli.Version+"`")
 	}
 
 	if len(m.Content) > 9 && m.Content[0:9] == ".members " {

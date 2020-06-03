@@ -30,7 +30,7 @@ func listMemberRoles(s *discord.Session, m *discord.MessageCreate) {
 			roles[i] = "• " + roleID
 			continue
 		}
-		roles[i] = fmt.Sprintf("• %s: @%s", role.ID, role.Name)
+		roles[i] = fmt.Sprintf("• @%s", role.Name)
 	}
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(

@@ -47,13 +47,12 @@ func membersWithRole(members []*discord.Member, roleID string) []string {
 			continue
 		}
 
-		nick := ""
+		u, nick := member.User, ""
 		if member.Nick != "" {
-			nick = "\n  -- " + member.Nick
+			nick = "- " + member.Nick
 		}
 
-		m = append(m, fmt.Sprintf("• %s: @%s#%s %s",
-			member.User.ID, member.User.Username, member.User.Discriminator, nick))
+		m = append(m, fmt.Sprintf("• @%s#%s %s", u.Username, u.Discriminator, nick))
 	}
 	return m
 }
