@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.0.1] - 2020-06-03
+### Fixed
+* Compile error caused by missing brace thanks to .todo command in local copy
+* Bad link to v1.0.0 tag in changelog
+
+
 ## [1.0.0] - 2020-06-03
 ### Added
 * `.roles` command to list the roles a mentioned user has
@@ -18,5 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Global permission checks - messages from members without Administrator are ignored
 
 
-[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.0.0...develop
-[1.0.0]: https://github.com/dshoreman/smegbot/releases/tag/v0.1.0
+[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.0.1...develop
+[1.0.1]: https://github.com/dshoreman/smegbot/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/dshoreman/smegbot/releases/tag/v1.0.0
