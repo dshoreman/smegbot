@@ -6,7 +6,7 @@ import (
 )
 
 // Version is the current Smegbot version
-const Version = "1.0.0"
+const Version = "1.0.1"
 
 // PrintLogo prints the Smegbot logo with Version info
 func PrintLogo() {
