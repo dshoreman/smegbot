@@ -13,14 +13,12 @@ import (
 	flag "github.com/ogier/pflag"
 )
 
-const version = "indev"
-
 var (
 	token string
 )
 
 func init() {
-	cli.PrintLogo(version)
+	cli.PrintLogo()
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options]\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "\nOptions:\n\n")

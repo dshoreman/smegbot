@@ -5,8 +5,11 @@ import (
 	"os"
 )
 
+// Version is the current Smegbot version
+const Version = "indev"
+
 // PrintLogo prints the Smegbot logo with Version info
-func PrintLogo(version string) {
+func PrintLogo() {
 	fmt.Printf(`
 8""""8                    8""""8
 8      eeeeeee eeee eeeee 8    8   eeeee eeeee
@@ -17,7 +20,7 @@ e   88 8  8  8 8    8  "8 88     8 8   8   8
                               Version %s
 
 Initialising...
-`, version)
+`, Version)
 }
 
 // Die prints an error message and exits the process
