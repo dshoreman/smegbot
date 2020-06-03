@@ -14,7 +14,11 @@ func onJoin(s *dg.Session, m *dg.GuildMemberAdd) {
 }
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
-	saveNick(m.GuildID, m.User, m.Nick)
+	g, u := m.GuildID, m.User.ID
+
+	if !nickIsCached(g, u) || currentNick(g, u) != m.Nick {
+		saveNick(g, m.User, m.Nick)
+	}
 }
 
 func onPart(s *dg.Session, m *dg.GuildMemberRemove) {
@@ -25,6 +29,25 @@ func getChannel(s *dg.Session, guildID string) string {
 	channels, _ := s.GuildChannels(guildID)
 
 	return channels[1].ID
+}
+
+func nickIsCached(g string, u string) bool {
+	path := filepath.Join("./storage/guilds/", g, "members", u, "nick.txt")
+	f, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return !f.IsDir()
+}
+
+func currentNick(g string, u string) string {
+	path := filepath.Join("./storage/guilds", g, "members", u, "nick.txt")
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		fmt.Println("Couldn't read "+path, err)
+		return ""
+	}
+	return string(b)
 }
 
 func saveNick(guildID string, u *dg.User, nick string) {
