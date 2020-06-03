@@ -61,6 +61,11 @@ func currentNick(g string, u string) string {
 }
 
 func saveNick(guildID string, u *dg.User, nick string) {
+	if nick == "" {
+		fmt.Println("\nNick was removed, saving username instead.")
+		nick = u.Username
+	}
+
 	path := filepath.Join("./storage/guilds", guildID, "members", u.ID)
 	err := os.MkdirAll(path, 0700)
 	if err != nil {
