@@ -5,8 +5,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	dg "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/config"
 )
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
@@ -38,14 +40,25 @@ func sendJoinPart(s *dg.Session, g string, u *dg.User, nick string, action strin
 	if nick != "" && nick != u.Username {
 		nickstring = "\nYou may know them as *" + nick + "*."
 	}
-	s.ChannelMessageSend(getChannel(s, g), fmt.Sprintf("**@%s#%s** has %s! :%s:%s",
+	s.ChannelMessageSend(getChannel(s, g, action), fmt.Sprintf("**@%s#%s** has %s! :%s:%s",
 		u.Username, u.Discriminator, action, emoji, nickstring))
 }
 
-func getChannel(s *dg.Session, guildID string) string {
-	channels, _ := s.GuildChannels(guildID)
+func getChannel(s *dg.Session, guildID string, action string) string {
+	config.LoadGuild(guildID)
+	j, p := config.Guild.JoinChannel, config.Guild.PartChannel
 
+	if action == "joined" && j != "" {
+		return parseChannelID(j)
+	} else if action == "left" && p != "" {
+		return parseChannelID(p)
+	}
+	channels, _ := s.GuildChannels(guildID)
 	return channels[1].ID
+}
+
+func parseChannelID(c string) string {
+	return strings.TrimSuffix(strings.TrimPrefix(c, "<#"), ">")
 }
 
 func nickIsCached(g string, u string) bool {
