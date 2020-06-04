@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	discord "github.com/bwmarrin/discordgo"
 )
@@ -60,28 +59,27 @@ func memberRoles(s *discord.Session, guildID string, target string) []string {
 	return roles
 }
 
-func backupRoles(s *discord.Session, channelID string, guildID string, target string, roles []string) (bool, error) {
+func backupRoles(s *discord.Session, channelID string, g string, u string, roles []string) (bool, error) {
 	b, err := json.Marshal(roles)
 	if err != nil {
 		return false, err
 	}
-	path := filepath.Join("./storage/guilds", guildID, "members", target)
-	err = os.MkdirAll(path, 0700)
+	err = os.MkdirAll(util.GuildPath("member", g, u), 0700)
 	if err == nil {
-		err = ioutil.WriteFile(filepath.Join(path, "roles.json"), b, 0644)
+		err = ioutil.WriteFile(util.GuildPath("m.roles", g, u), b, 0644)
 	}
 	return err == nil, err
 }
 
-func removeRoles(s *discord.Session, guildID string, userID string, roles []string) {
+func removeRoles(s *discord.Session, g string, u string, roles []string) {
 	for _, role := range roles {
 		fmt.Printf("Removing role %s...\n", role)
-		s.GuildMemberRoleRemove(guildID, userID, role)
+		s.GuildMemberRoleRemove(g, u, role)
 	}
 }
 
-func restoreRoles(s *discord.Session, guildID string, userID string) {
-	b, err := ioutil.ReadFile(filepath.Join("./storage/guilds", guildID, "members", userID, "roles.json"))
+func restoreRoles(s *discord.Session, g string, u string) {
+	b, err := ioutil.ReadFile(util.GuildPath("m.roles", g, u))
 	if err != nil {
 		fmt.Println("Couldn't read user's roles.json", err)
 		return
@@ -89,7 +87,7 @@ func restoreRoles(s *discord.Session, guildID string, userID string) {
 	roles := make([]string, 0)
 	json.Unmarshal(b, &roles)
 	for _, role := range roles {
-		s.GuildMemberRoleAdd(guildID, userID, role)
+		s.GuildMemberRoleAdd(g, u, role)
 	}
 }
 

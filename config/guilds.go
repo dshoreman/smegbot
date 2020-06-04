@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"path/filepath"
+
+	"github.com/dshoreman/smegbot/util"
 )
 
 // GuildConfig defines valid guild config options
@@ -17,8 +18,8 @@ type GuildConfig struct {
 var Guild GuildConfig
 
 // LoadGuild loads the config for a guild
-func LoadGuild(guildID string) {
-	b, err := ioutil.ReadFile(filepath.Join("./storage/guilds", guildID, "config.json"))
+func LoadGuild(g string) {
+	b, err := ioutil.ReadFile(util.GuildPath("config", g))
 	if err == nil {
 		json.Unmarshal(b, &Guild)
 	}
@@ -30,10 +31,9 @@ func SaveGuild(guildID string) error {
 	if err != nil {
 		return err
 	}
-	path := filepath.Join("./storage/guilds", guildID)
-	err = os.MkdirAll(path, 0700)
+	err = os.MkdirAll(util.GuildPath("", guildID), 0700)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filepath.Join(path, "config.json"), b, 0644)
+	return ioutil.WriteFile(util.GuildPath("config", guildID), b, 0644)
 }

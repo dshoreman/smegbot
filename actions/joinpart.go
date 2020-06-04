@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/config"
+	"github.com/dshoreman/smegbot/util"
 )
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
@@ -57,8 +57,7 @@ func getChannel(s *dg.Session, guildID string, action string) string {
 }
 
 func nickIsCached(g string, u string) bool {
-	path := filepath.Join("./storage/guilds/", g, "members", u, "nick.txt")
-	f, err := os.Stat(path)
+	f, err := os.Stat(util.GuildPath("m.nick", g, u))
 	if err != nil {
 		return false
 	}
@@ -66,7 +65,7 @@ func nickIsCached(g string, u string) bool {
 }
 
 func currentNick(g string, u string) string {
-	path := filepath.Join("./storage/guilds", g, "members", u, "nick.txt")
+	path := util.GuildPath("m.nick", g, u)
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Println("Couldn't read "+path, err)
@@ -75,20 +74,20 @@ func currentNick(g string, u string) string {
 	return string(b)
 }
 
-func saveNick(guildID string, u *dg.User, nick string) {
+func saveNick(g string, u *dg.User, nick string) {
 	if nick == "" {
 		fmt.Println("\nNick was removed, saving username instead.")
 		nick = u.Username
 	}
 
-	path := filepath.Join("./storage/guilds", guildID, "members", u.ID)
+	path := util.GuildPath("member", g, u.ID)
 	err := os.MkdirAll(path, 0700)
 	if err != nil {
 		fmt.Println("\nError: Couldn't create directory "+path, err)
 		return
 	}
 
-	err = ioutil.WriteFile(filepath.Join(path, "nick.txt"), []byte(nick), 0644)
+	err = ioutil.WriteFile(util.GuildPath("member", g, u.ID), []byte(nick), 0644)
 	if err != nil {
 		fmt.Println("\nError: Couldn't write nick.txt", err)
 	} else {
