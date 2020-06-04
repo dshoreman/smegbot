@@ -80,17 +80,10 @@ func saveNick(g string, u *dg.User, nick string) {
 		nick = u.Username
 	}
 
-	path := util.GuildPath("member", g, u.ID)
-	err := os.MkdirAll(path, 0700)
-	if err != nil {
-		fmt.Println("\nError: Couldn't create directory "+path, err)
-		return
-	}
-
-	err = ioutil.WriteFile(util.GuildPath("member", g, u.ID), []byte(nick), 0644)
+	err := util.WriteFile(util.GuildPath("m.nick", g, u.ID), []byte(nick))
 	if err != nil {
 		fmt.Println("\nError: Couldn't write nick.txt", err)
-	} else {
-		fmt.Printf("\nWritten new nick for @%s#%s: %s\n", u.Username, u.Discriminator, nick)
+		return
 	}
+	fmt.Printf("\nWritten new nick for @%s#%s: %s\n", u.Username, u.Discriminator, nick)
 }

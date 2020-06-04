@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 
 	"github.com/dshoreman/smegbot/util"
 )
@@ -26,14 +25,6 @@ func LoadGuild(g string) {
 }
 
 // SaveGuild saves the config for a guild
-func SaveGuild(guildID string) error {
-	b, err := json.Marshal(Guild)
-	if err != nil {
-		return err
-	}
-	err = os.MkdirAll(util.GuildPath("", guildID), 0700)
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(util.GuildPath("config", guildID), b, 0644)
+func SaveGuild(g string) error {
+	return util.WriteJSON(util.GuildPath("config", g), Guild)
 }
