@@ -33,6 +33,11 @@ func runAll(s *discord.Session, m *discord.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Currently running Smegbot version `"+cli.Version+"`")
 	}
 
+	if m.Content == ".config" {
+		listConfigValues(s, m)
+		return
+	}
+
 	if len(m.Content) > 9 && m.Content[0:9] == ".members " {
 		listRoleMembers(s, m)
 		return
