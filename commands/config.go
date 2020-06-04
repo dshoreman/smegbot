@@ -21,7 +21,7 @@ func listConfigValues(s *dg.Session, m *dg.MessageCreate) {
 	}
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
-		"> \n> **Current configuration**:\n> \n> `joinChannel`  -  %s\n> `partChannel`  -  %s\n",
+		"> \n> **Current configuration**:\n> \n> `joinChannel`  -  <#%s>\n> `partChannel`  -  <#%s>\n",
 		joins, parts))
 }
 
@@ -33,10 +33,10 @@ func setConfigOption(s *dg.Session, m *dg.MessageCreate) {
 	if matched {
 		args := strings.Fields(m.Content)
 		if args[1] == "joinChannel" && config.Guild.JoinChannel != args[2] {
-			config.Guild.JoinChannel = args[2]
+			config.Guild.JoinChannel = args[2][2 : len(args[2])-1]
 			save = true
 		} else if args[1] == "partChannel" && config.Guild.PartChannel != args[2] {
-			config.Guild.PartChannel = args[2]
+			config.Guild.PartChannel = args[2][2 : len(args[2])-1]
 			save = true
 		}
 	} else {

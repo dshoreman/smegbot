@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/config"
@@ -49,16 +48,12 @@ func getChannel(s *dg.Session, guildID string, action string) string {
 	j, p := config.Guild.JoinChannel, config.Guild.PartChannel
 
 	if action == "joined" && j != "" {
-		return parseChannelID(j)
+		return j
 	} else if action == "left" && p != "" {
-		return parseChannelID(p)
+		return p
 	}
 	channels, _ := s.GuildChannels(guildID)
 	return channels[1].ID
-}
-
-func parseChannelID(c string) string {
-	return strings.TrimSuffix(strings.TrimPrefix(c, "<#"), ">")
 }
 
 func nickIsCached(g string, u string) bool {
