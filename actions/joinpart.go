@@ -47,10 +47,10 @@ func getChannel(s *dg.Session, guildID string, action string) string {
 	config.LoadGuild(guildID)
 	j, p := config.Guild.JoinChannel, config.Guild.PartChannel
 
-	if action == "joined" && j != "" {
-		return j
-	} else if action == "left" && p != "" {
+	if action == "left" && p != "" {
 		return p
+	} else if action != "left" && j != "" {
+		return j
 	}
 	channels, _ := s.GuildChannels(guildID)
 	return channels[1].ID
