@@ -9,19 +9,6 @@ import (
 	dg "github.com/bwmarrin/discordgo"
 )
 
-func onJoin(s *dg.Session, m *dg.GuildMemberAdd) {
-	msg, nick, status := "<@%s> has %s! :wave:%s", currentNick(m.GuildID, m.User.ID), "joined"
-	if nick != "" {
-		status = "returned"
-		if nick == m.User.Username {
-			nick = ""
-		} else {
-			nick = "\nYou may remember them as " + nick
-		}
-	}
-	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(msg, m.User.ID, status, nick))
-}
-
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
 	g, u := m.GuildID, m.User.ID
 
@@ -30,15 +17,29 @@ func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
 	}
 }
 
+func onJoin(s *dg.Session, m *dg.GuildMemberAdd) {
+	nick, action := currentNick(m.GuildID, m.User.ID), "joined"
+	if nick != "" {
+		action = "returned"
+	}
+	sendJoinPart(s, m.GuildID, m.User, nick, action)
+}
+
 func onPart(s *dg.Session, m *dg.GuildMemberRemove) {
 	nick := currentNick(m.GuildID, m.User.ID)
-	if nick == m.User.Username {
-		nick = ""
-	} else if nick != "" {
-		nick = " (" + nick + ")"
+	sendJoinPart(s, m.GuildID, m.User, nick, "left")
+}
+
+func sendJoinPart(s *dg.Session, g string, u *dg.User, nick string, action string) {
+	emoji, nickstring := "wave", ""
+	if action == "left" {
+		emoji = "slight_frown"
 	}
-	s.ChannelMessageSend(getChannel(s, m.GuildID), fmt.Sprintf(
-		"<@%s>%s has left :slight_frown:", m.User.ID, nick))
+	if nick != "" && nick != u.Username {
+		nickstring = "\nYou may know them as *" + nick + "*."
+	}
+	s.ChannelMessageSend(getChannel(s, g), fmt.Sprintf("**@%s#%s** has %s! :%s:%s",
+		u.Username, u.Discriminator, action, emoji, nickstring))
 }
 
 func getChannel(s *dg.Session, guildID string) string {
