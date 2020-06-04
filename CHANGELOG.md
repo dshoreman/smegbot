@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Nicks (or usernames) are now saved when a member is updated
 * Join and part messages now show nickname or previous name where applicable
+* New `.config` command for getting/setting guild options
+* Target channel for join and part messages can now be set by admins
 
 
 ## [1.0.1] - 2020-06-03

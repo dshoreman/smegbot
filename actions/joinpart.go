@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	dg "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/config"
 )
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
@@ -38,13 +39,20 @@ func sendJoinPart(s *dg.Session, g string, u *dg.User, nick string, action strin
 	if nick != "" && nick != u.Username {
 		nickstring = "\nYou may know them as *" + nick + "*."
 	}
-	s.ChannelMessageSend(getChannel(s, g), fmt.Sprintf("**@%s#%s** has %s! :%s:%s",
+	s.ChannelMessageSend(getChannel(s, g, action), fmt.Sprintf("**@%s#%s** has %s! :%s:%s",
 		u.Username, u.Discriminator, action, emoji, nickstring))
 }
 
-func getChannel(s *dg.Session, guildID string) string {
-	channels, _ := s.GuildChannels(guildID)
+func getChannel(s *dg.Session, guildID string, action string) string {
+	config.LoadGuild(guildID)
+	j, p := config.Guild.JoinChannel, config.Guild.PartChannel
 
+	if action == "left" && p != "" {
+		return p
+	} else if action != "left" && j != "" {
+		return j
+	}
+	channels, _ := s.GuildChannels(guildID)
 	return channels[1].ID
 }
 
