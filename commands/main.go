@@ -37,6 +37,10 @@ func runAll(s *discord.Session, m *discord.MessageCreate) {
 		listConfigValues(s, m)
 		return
 	}
+	if len(m.Content) > 8 && m.Content[0:8] == ".config " {
+		setConfigOption(s, m)
+		return
+	}
 
 	if len(m.Content) > 9 && m.Content[0:9] == ".members " {
 		listRoleMembers(s, m)
