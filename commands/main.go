@@ -3,12 +3,12 @@ package commands
 import (
 	"fmt"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/cli"
 )
 
 // OnMessageReceived processes incoming messages from Discord to register commands
-func OnMessageReceived(s *discord.Session, m *discord.MessageCreate) {
+func OnMessageReceived(s *dg.Session, m *dg.MessageCreate) {
 	fmt.Println(m.Author.Username, ":", m.Content)
 
 	if m.Author.ID == s.State.User.ID {
@@ -24,7 +24,7 @@ func OnMessageReceived(s *discord.Session, m *discord.MessageCreate) {
 	}
 }
 
-func runAll(s *discord.Session, m *discord.MessageCreate) {
+func runAll(s *dg.Session, m *dg.MessageCreate) {
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 		return
@@ -61,7 +61,7 @@ func runAll(s *discord.Session, m *discord.MessageCreate) {
 	}
 }
 
-func hasPermission(s *discord.Session, m *discord.MessageCreate) (bool, error) {
+func hasPermission(s *dg.Session, m *dg.MessageCreate) (bool, error) {
 	guildID, userID := m.GuildID, m.Author.ID
 	member, err := s.State.Member(guildID, userID)
 	if err != nil {
@@ -74,7 +74,7 @@ func hasPermission(s *discord.Session, m *discord.MessageCreate) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		if role.Permissions&discord.PermissionAdministrator != 0 {
+		if role.Permissions&dg.PermissionAdministrator != 0 {
 			return true, nil
 		}
 	}

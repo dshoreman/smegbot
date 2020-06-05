@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 )
 
-func listRoleMembers(s *discord.Session, m *discord.MessageCreate) {
+func listRoleMembers(s *dg.Session, m *dg.MessageCreate) {
 	role, err := s.State.Role(m.GuildID, m.MentionRoles[0])
 	if err != nil {
 		fmt.Println("\nError: Could not get role\n", err)
@@ -31,7 +31,7 @@ func listRoleMembers(s *discord.Session, m *discord.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
-func memberHasRole(member *discord.Member, role string) bool {
+func memberHasRole(member *dg.Member, role string) bool {
 	for _, current := range member.Roles {
 		if current == role {
 			return true
@@ -40,7 +40,7 @@ func memberHasRole(member *discord.Member, role string) bool {
 	return false
 }
 
-func membersWithRole(members []*discord.Member, roleID string) []string {
+func membersWithRole(members []*dg.Member, roleID string) []string {
 	m := make([]string, 0)
 	for _, member := range members {
 		if !memberHasRole(member, roleID) {

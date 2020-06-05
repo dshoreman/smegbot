@@ -3,11 +3,11 @@ package commands
 import (
 	"fmt"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/util"
 )
 
-func nuke(s *discord.Session, m *discord.MessageCreate) {
+func nuke(s *dg.Session, m *dg.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		u := m.Mentions[0].ID
@@ -16,7 +16,7 @@ func nuke(s *discord.Session, m *discord.MessageCreate) {
 	}
 }
 
-func replaceRoles(s *discord.Session, g string, u string, sinbin string) error {
+func replaceRoles(s *dg.Session, g string, u string, sinbin string) error {
 	if err := s.GuildMemberRoleAdd(g, u, sinbin); err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func replaceRoles(s *discord.Session, g string, u string, sinbin string) error {
 	return err
 }
 
-func restore(s *discord.Session, m *discord.MessageCreate) {
+func restore(s *dg.Session, m *dg.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		target := m.Mentions[0].ID
@@ -39,7 +39,7 @@ func restore(s *discord.Session, m *discord.MessageCreate) {
 	}
 }
 
-func quarantineRole(s *discord.Session, channelID string, guildID string) string {
+func quarantineRole(s *dg.Session, channelID string, guildID string) string {
 	roles, _ := s.GuildRoles(guildID)
 	for _, r := range roles {
 		if r.Name == "Quarantine" {
@@ -50,7 +50,7 @@ func quarantineRole(s *discord.Session, channelID string, guildID string) string
 	return ""
 }
 
-func memberRoles(s *discord.Session, guildID string, target string) []string {
+func memberRoles(s *dg.Session, guildID string, target string) []string {
 	member, err := s.GuildMember(guildID, target)
 	roles := make([]string, 0)
 	if err == nil {
@@ -59,14 +59,14 @@ func memberRoles(s *discord.Session, guildID string, target string) []string {
 	return roles
 }
 
-func removeRoles(s *discord.Session, g string, u string, roles []string) {
+func removeRoles(s *dg.Session, g string, u string, roles []string) {
 	for _, role := range roles {
 		fmt.Printf("Removing role %s...\n", role)
 		s.GuildMemberRoleRemove(g, u, role)
 	}
 }
 
-func restoreRoles(s *discord.Session, g string, u string) {
+func restoreRoles(s *dg.Session, g string, u string) {
 	roles := make([]string, 0)
 	if util.ReadJSON(util.GuildPath("m.roles", g, u), &roles) != nil {
 		return
@@ -76,7 +76,7 @@ func restoreRoles(s *discord.Session, g string, u string) {
 	}
 }
 
-func sendSuccessOrFail(s *discord.Session, channelID string, err error, mode string, target string) {
+func sendSuccessOrFail(s *dg.Session, channelID string, err error, mode string, target string) {
 	op, result := "adding", "now in Quarantine."
 	if mode == "remove" {
 		op, result = "removing", "back out of Quarantine!"

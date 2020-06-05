@@ -1,18 +1,18 @@
 package actions
 
 import (
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 )
 
 // Register sets up all non-message event handlers
-func Register(dg *discord.Session) {
-	dg.AddHandler(func(s *discord.Session, m *discord.GuildMemberAdd) {
+func Register(s *dg.Session) {
+	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberAdd) {
 		onJoin(s, m)
 	})
-	dg.AddHandler(func(s *discord.Session, m *discord.GuildMemberUpdate) {
+	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberUpdate) {
 		onChange(s, m)
 	})
-	dg.AddHandler(func(s *discord.Session, m *discord.GuildMemberRemove) {
+	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberRemove) {
 		onPart(s, m)
 	})
 }

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 )
 
-func listMemberRoles(s *discord.Session, m *discord.MessageCreate) {
+func listMemberRoles(s *dg.Session, m *dg.MessageCreate) {
 	user := m.Mentions[0]
 
 	member, err := s.GuildMember(m.GuildID, user.ID)
