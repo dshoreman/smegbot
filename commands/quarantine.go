@@ -10,20 +10,22 @@ import (
 func nuke(s *discord.Session, m *discord.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
-		g, u, saved := m.GuildID, m.Mentions[0].ID, true
-		roles := memberRoles(s, g, u)
-
-		err := util.WriteJSON(util.GuildPath("m.roles", g, u), roles)
-		if err != nil {
-			fmt.Println("\nError: Could not save roles to file\n", err)
-			saved = false
-		}
-		err = s.GuildMemberRoleAdd(g, u, sinbin)
-		if saved && err == nil {
-			removeRoles(s, g, u, roles)
-		}
+		u := m.Mentions[0].ID
+		err := replaceRoles(s, m.GuildID, u, sinbin)
 		sendSuccessOrFail(s, m.ChannelID, err, "add", u)
 	}
+}
+
+func replaceRoles(s *discord.Session, g string, u string, sinbin string) error {
+	if err := s.GuildMemberRoleAdd(g, u, sinbin); err != nil {
+		return err
+	}
+	roles := memberRoles(s, g, u)
+	err := util.WriteJSON(util.GuildPath("m.roles", g, u), roles)
+	if err == nil {
+		removeRoles(s, g, u, roles)
+	}
+	return err
 }
 
 func restore(s *discord.Session, m *discord.MessageCreate) {

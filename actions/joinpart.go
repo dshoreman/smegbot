@@ -63,11 +63,7 @@ func saveNick(g string, u *dg.User, nick string) {
 		fmt.Println("\nNick was removed, saving username instead.")
 		nick = u.Username
 	}
-
-	err := util.WriteFile(util.GuildPath("m.nick", g, u.ID), []byte(nick))
-	if err != nil {
-		fmt.Println("\nError: Couldn't write nick.txt", err)
-		return
+	if err := util.WriteFile(util.GuildPath("m.nick", g, u.ID), []byte(nick)); err == nil {
+		fmt.Printf("\nWritten new nick for @%s#%s: %s\n", u.Username, u.Discriminator, nick)
 	}
-	fmt.Printf("\nWritten new nick for @%s#%s: %s\n", u.Username, u.Discriminator, nick)
 }

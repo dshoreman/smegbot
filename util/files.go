@@ -40,6 +40,7 @@ func ReadFile(path string) []byte {
 func WriteJSON(file string, v interface{}) error {
 	b, err := json.Marshal(v)
 	if err != nil {
+		fmt.Println("\nError: Failed encoding JSON", err)
 		return err
 	}
 	return WriteFile(file, b)
@@ -47,10 +48,13 @@ func WriteJSON(file string, v interface{}) error {
 
 // WriteFile takes a JSON byte represenation and writes it to a file
 func WriteFile(file string, content []byte) error {
-	err := os.MkdirAll(filepath.Dir(file), 0700)
-	if err != nil {
-		fmt.Println("\nError: Couldn't create directory "+file, err)
+	if err := os.MkdirAll(filepath.Dir(file), 0700); err != nil {
+		fmt.Println("\nError: Couldn't create directory "+filepath.Dir(file), err)
 		return err
 	}
-	return ioutil.WriteFile(file, content, 0644)
+	if err := ioutil.WriteFile(file, content, 0644); err != nil {
+		fmt.Println("\nError: Couldn't write file "+file, err)
+		return err
+	}
+	return nil
 }
