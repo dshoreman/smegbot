@@ -2,8 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 
 	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/config"
@@ -13,7 +11,7 @@ import (
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
 	g, u := m.GuildID, m.User.ID
 
-	if !nickIsCached(g, u) || currentNick(g, u) != m.Nick {
+	if !util.FileExists(util.GuildPath("m.nick", g, u)) || currentNick(g, u) != m.Nick {
 		saveNick(g, m.User, m.Nick)
 	}
 }
@@ -56,22 +54,8 @@ func getChannel(s *dg.Session, guildID string, action string) string {
 	return channels[1].ID
 }
 
-func nickIsCached(g string, u string) bool {
-	f, err := os.Stat(util.GuildPath("m.nick", g, u))
-	if err != nil {
-		return false
-	}
-	return !f.IsDir()
-}
-
 func currentNick(g string, u string) string {
-	path := util.GuildPath("m.nick", g, u)
-	b, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Println("Couldn't read "+path, err)
-		return ""
-	}
-	return string(b)
+	return util.ReadString(util.GuildPath("m.nick", g, u))
 }
 
 func saveNick(g string, u *dg.User, nick string) {

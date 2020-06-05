@@ -1,9 +1,6 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"github.com/dshoreman/smegbot/util"
 )
 
@@ -18,10 +15,7 @@ var Guild GuildConfig
 
 // LoadGuild loads the config for a guild
 func LoadGuild(g string) {
-	b, err := ioutil.ReadFile(util.GuildPath("config", g))
-	if err == nil {
-		json.Unmarshal(b, &Guild)
-	}
+	util.ReadJSON(util.GuildPath("config", g), &Guild)
 }
 
 // SaveGuild saves the config for a guild

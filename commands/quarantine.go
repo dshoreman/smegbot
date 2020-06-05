@@ -1,9 +1,7 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	discord "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/util"
@@ -67,13 +65,10 @@ func removeRoles(s *discord.Session, g string, u string, roles []string) {
 }
 
 func restoreRoles(s *discord.Session, g string, u string) {
-	b, err := ioutil.ReadFile(util.GuildPath("m.roles", g, u))
-	if err != nil {
-		fmt.Println("Couldn't read user's roles.json", err)
+	roles := make([]string, 0)
+	if util.ReadJSON(util.GuildPath("m.roles", g, u), &roles) != nil {
 		return
 	}
-	roles := make([]string, 0)
-	json.Unmarshal(b, &roles)
 	for _, role := range roles {
 		s.GuildMemberRoleAdd(g, u, role)
 	}
