@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/actions"
 	"github.com/dshoreman/smegbot/cli"
 	"github.com/dshoreman/smegbot/commands"
@@ -34,18 +34,18 @@ func main() {
 		cli.Die("Token must be set.", nil)
 	}
 
-	dg, err := discord.New("Bot " + token)
+	s, err := dg.New("Bot " + token)
 	if err != nil {
 		cli.Die("Could not create session.", err)
 	}
 
-	err = dg.Open()
+	err = s.Open()
 	if err != nil {
 		cli.Die("Could not connect to Discord.", err)
 	}
 
-	actions.Register(dg)
-	dg.AddHandler(commands.OnMessageReceived)
+	actions.Register(s)
+	s.AddHandler(commands.OnMessageReceived)
 
 	fmt.Print("Connected! Press Ctrl-C to exit.\n\n")
 	sig := make(chan os.Signal, 1)
@@ -53,6 +53,6 @@ func main() {
 	<-sig
 
 	fmt.Println("\n\nDisconnecting...")
-	dg.Close()
+	s.Close()
 	fmt.Println("Goodbye!")
 }
