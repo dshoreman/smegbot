@@ -28,6 +28,7 @@ func runAll(s *dg.Session, m *dg.MessageCreate) {
 	}
 	if m.Content == ".version" {
 		s.ChannelMessageSend(m.ChannelID, "Currently running Smegbot version `"+cli.Version+"`")
+		return
 	}
 
 	if m.Content == ".config" {
