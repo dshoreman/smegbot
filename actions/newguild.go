@@ -11,9 +11,14 @@ import (
 func onGuildJoin(s *dg.Session, m *dg.GuildCreate) {
 	printGuildInfo(s, m.Guild)
 
-	if !hasConfig(m.Guild.ID) {
+	if !hasConfig(m.Guild.ID) || withNames(m.Guild) < len(m.Guild.Members) {
 		fmt.Printf("Running setup for %s:\n", m.Guild.Name)
+	}
+	if !hasConfig(m.Guild.ID) {
 		writeConfig(m.Guild)
+	}
+	if withNames(m.Guild) < len(m.Guild.Members) {
+		saveMemberNames(m.Guild)
 	}
 }
 
@@ -47,6 +52,22 @@ func writeConfig(g *dg.Guild) {
 		return
 	}
 	fmt.Println("OK")
+}
+
+func saveMemberNames(g *dg.Guild) {
+	saved, missing := 0, g.MemberCount-withNames(g)
+	fmt.Printf("* Updating member names (missing %d)... ", missing)
+
+	for _, m := range g.Members {
+		n, f := m.Nick, util.GuildPath("m.nick", g.ID, m.User.ID)
+		if n == "" {
+			n = m.User.String()
+		}
+		if err := util.WriteFile(f, []byte(n)); err == nil {
+			saved++
+		}
+	}
+	fmt.Printf("%d/%d OK\n", saved, g.MemberCount)
 }
 
 func withNames(g *dg.Guild) int {
