@@ -4,11 +4,17 @@ import (
 	"fmt"
 
 	dg "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/config"
 	"github.com/dshoreman/smegbot/util"
 )
 
 func onGuildJoin(s *dg.Session, m *dg.GuildCreate) {
 	printGuildInfo(s, m.Guild)
+
+	if !hasConfig(m.Guild.ID) {
+		fmt.Printf("Running setup for %s:\n", m.Guild.Name)
+		writeConfig(m.Guild)
+	}
 }
 
 func printGuildInfo(s *dg.Session, g *dg.Guild) {
@@ -18,16 +24,29 @@ func printGuildInfo(s *dg.Session, g *dg.Guild) {
    Guild is owned by <@%s>. System messages are sent to <#%s>.
 
 `
-	fmt.Printf(output, g.Name, hasConfig(g),
+	configured := "Seems it's missing its config too!"
+	if hasConfig(g.ID) {
+		configured = "It appears to have config already."
+	}
+	fmt.Printf(output, g.Name, configured,
 		joinDate.Format(f), g.MemberCount, withNames(g),
 		g.OwnerID, g.SystemChannelID)
 }
 
-func hasConfig(g *dg.Guild) string {
-	if util.FileExists(util.GuildPath("config", g.ID)) {
-		return "It appears to have config already."
+func hasConfig(g string) bool {
+	return util.FileExists(util.GuildPath("config", g))
+}
+
+func writeConfig(g *dg.Guild) {
+	fmt.Printf("* Saving initial config... ")
+	config.Guild.JoinChannel = g.SystemChannelID
+	config.Guild.PartChannel = g.SystemChannelID
+
+	if err := config.SaveGuild(g.ID); err != nil {
+		fmt.Println("ERROR\n   ", err)
+		return
 	}
-	return "Seems it's missing its config too!"
+	fmt.Println("OK")
 }
 
 func withNames(g *dg.Guild) int {
