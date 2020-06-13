@@ -2,17 +2,16 @@ package actions
 
 import (
 	dg "github.com/bwmarrin/discordgo"
+	cmd "github.com/dshoreman/smegbot/commands"
 )
 
 // Register sets up all non-message event handlers
 func Register(s *dg.Session) {
-	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberAdd) {
-		onJoin(s, m)
-	})
-	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberUpdate) {
-		onChange(s, m)
-	})
-	s.AddHandler(func(s *dg.Session, m *dg.GuildMemberRemove) {
-		onPart(s, m)
-	})
+	s.AddHandler(onGuildJoin)
+
+	s.AddHandler(onJoin)
+	s.AddHandler(onChange)
+	s.AddHandler(onPart)
+
+	s.AddHandler(cmd.OnMessageReceived)
 }
