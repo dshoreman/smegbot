@@ -2,81 +2,59 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
-	discord "github.com/bwmarrin/discordgo"
+	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/cli"
+	"github.com/dshoreman/smegbot/util"
 )
 
 // OnMessageReceived processes incoming messages from Discord to register commands
-func OnMessageReceived(s *discord.Session, m *discord.MessageCreate) {
+func OnMessageReceived(s *dg.Session, m *dg.MessageCreate) {
 	fmt.Println(m.Author.Username, ":", m.Content)
 
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-
-	ok, err := hasPermission(s, m)
-	if err != nil {
-		fmt.Println("Failed permissions check.", err)
-	}
-	if ok {
+	if ok, _ := util.IsAdmin(s, m.GuildID, m.Author.ID); ok {
 		runAll(s, m)
 	}
 }
 
-func runAll(s *discord.Session, m *discord.MessageCreate) {
+func runAll(s *dg.Session, m *dg.MessageCreate) {
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 		return
 	}
 	if m.Content == ".version" {
 		s.ChannelMessageSend(m.ChannelID, "Currently running Smegbot version `"+cli.Version+"`")
+		return
 	}
 
 	if m.Content == ".config" {
 		listConfigValues(s, m)
 		return
 	}
-	if len(m.Content) > 8 && m.Content[0:8] == ".config " {
+	if strings.HasPrefix(m.Content, ".config ") {
 		setConfigOption(s, m)
 		return
 	}
 
-	if len(m.Content) > 9 && m.Content[0:9] == ".members " {
+	if strings.HasPrefix(m.Content, ".members ") {
 		listRoleMembers(s, m)
 		return
 	}
-	if len(m.Content) > 7 && m.Content[0:7] == ".roles " {
+	if strings.HasPrefix(m.Content, ".roles ") {
 		listMemberRoles(s, m)
 		return
 	}
 
-	if len(m.Content) > 6 && m.Content[0:6] == ".nuke " {
+	if strings.HasPrefix(m.Content, ".nuke ") {
 		nuke(s, m)
 		return
 	}
-	if len(m.Content) > 9 && m.Content[0:9] == ".restore " {
+	if strings.HasPrefix(m.Content, ".restore ") {
 		restore(s, m)
 		return
 	}
-}
-
-func hasPermission(s *discord.Session, m *discord.MessageCreate) (bool, error) {
-	guildID, userID := m.GuildID, m.Author.ID
-	member, err := s.State.Member(guildID, userID)
-	if err != nil {
-		if member, err = s.GuildMember(guildID, userID); err != nil {
-			return false, err
-		}
-	}
-	for _, roleID := range member.Roles {
-		role, err := s.State.Role(guildID, roleID)
-		if err != nil {
-			return false, err
-		}
-		if role.Permissions&discord.PermissionAdministrator != 0 {
-			return true, nil
-		}
-	}
-	return false, nil
 }

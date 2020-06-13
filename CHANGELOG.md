@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.2.0] - 2020-06-13
+### Added
+* Guild stats now get printed when loading bot or joining servers
+* First-run setup for guilds to save initial member names and guild config
+
+
 ## [1.1.0] - 2020-06-04
 ### Added
 * Nicks (or usernames) are now saved when a member is updated
@@ -32,7 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Global permission checks - messages from members without Administrator are ignored
 
 
-[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.1.0...develop
+[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.2.0...develop
+[1.2.0]: https://github.com/dshoreman/smegbot/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/dshoreman/smegbot/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/dshoreman/smegbot/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/dshoreman/smegbot/releases/tag/v1.0.0
