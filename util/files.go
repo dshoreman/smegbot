@@ -31,7 +31,7 @@ func ReadString(path string) string {
 func ReadFile(path string) []byte {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Println("Couldn't read file"+path, err)
+		fmt.Println("Error: Couldn't read file\n ", err)
 	}
 	return b
 }

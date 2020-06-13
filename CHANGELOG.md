@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Added
+* Guild stats now get printed when loading bot or joining servers
+* First-run setup for guilds to save initial member names and guild config
 
 
 ## [1.1.0] - 2020-06-04

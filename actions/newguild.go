@@ -9,37 +9,29 @@ import (
 )
 
 func onGuildJoin(s *dg.Session, m *dg.GuildCreate) {
-	printGuildInfo(s, m.Guild)
+	g := m.Guild
+	needsConfig, current := !hasConfig(g.ID), savedNameCount(g)
 
-	if !hasConfig(m.Guild.ID) || withNames(m.Guild) < len(m.Guild.Members) {
-		fmt.Printf("Running setup for %s:\n", m.Guild.Name)
+	printGuildInfo(g, current)
+	if needsConfig || current < g.MemberCount {
+		fmt.Printf("Running setup for %s:\n", g.Name)
 	}
-	if !hasConfig(m.Guild.ID) {
-		writeConfig(m.Guild)
+	if needsConfig {
+		writeConfig(g)
 	}
-	if withNames(m.Guild) < len(m.Guild.Members) {
-		saveMemberNames(m.Guild)
+	if current < len(g.Members) {
+		saveMemberNames(g, current)
 	}
 }
 
-func printGuildInfo(s *dg.Session, g *dg.Guild) {
+func printGuildInfo(g *dg.Guild, nameCount int) {
 	joinDate, _ := g.JoinedAt.Parse()
-	f, output := "15:04:05 on January 2, 2006", `Smegbot has joined %s! %s
+	f, output := "15:04:05 on January 2, 2006", `Smegbot has joined %s!
    Smegbot first joined at %s. Of %d members, %d have had names saved.
    Guild is owned by <@%s>. System messages are sent to <#%s>.
 
 `
-	configured := "Seems it's missing its config too!"
-	if hasConfig(g.ID) {
-		configured = "It appears to have config already."
-	}
-	fmt.Printf(output, g.Name, configured,
-		joinDate.Format(f), g.MemberCount, withNames(g),
-		g.OwnerID, g.SystemChannelID)
-}
-
-func hasConfig(g string) bool {
-	return util.FileExists(util.GuildPath("config", g))
+	fmt.Printf(output, g.Name, joinDate.Format(f), g.MemberCount, nameCount, g.OwnerID, g.SystemChannelID)
 }
 
 func writeConfig(g *dg.Guild) {
@@ -54,8 +46,8 @@ func writeConfig(g *dg.Guild) {
 	fmt.Println("OK")
 }
 
-func saveMemberNames(g *dg.Guild) {
-	saved, missing := 0, g.MemberCount-withNames(g)
+func saveMemberNames(g *dg.Guild, nameCount int) {
+	saved, missing := 0, g.MemberCount-nameCount
 	fmt.Printf("* Updating member names (missing %d)... ", missing)
 
 	for _, m := range g.Members {
@@ -70,7 +62,11 @@ func saveMemberNames(g *dg.Guild) {
 	fmt.Printf("%d/%d OK\n", saved, g.MemberCount)
 }
 
-func withNames(g *dg.Guild) int {
+func hasConfig(g string) bool {
+	return util.FileExists(util.GuildPath("config", g))
+}
+
+func savedNameCount(g *dg.Guild) int {
 	count := 0
 	for _, m := range g.Members {
 		f := util.GuildPath("m.nick", g.ID, m.User.ID)
