@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 * No longer displays extraneous nick-saving output when nick didn't change
+* Quarantine role no longer gets removed instantly while running .nuke
 
 
 ## [1.2.0] - 2020-06-13
