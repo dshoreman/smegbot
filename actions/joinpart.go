@@ -9,10 +9,9 @@ import (
 )
 
 func onChange(s *dg.Session, m *dg.GuildMemberUpdate) {
-	g, u := m.GuildID, m.User.ID
-
-	if !util.FileExists(util.GuildPath("m.nick", g, u)) || currentNick(g, u) != m.Nick {
-		saveNick(g, m.User, m.Nick)
+	nick, err := util.SaveMemberName(m.GuildID, m.Member)
+	if err == nil && nick != "" {
+		fmt.Printf("Written new name for %s: %s\n", m.User.String(), currentNick(m.GuildID, m.User.ID))
 	}
 }
 
@@ -56,14 +55,4 @@ func getChannel(s *dg.Session, guildID string, action string) string {
 
 func currentNick(g string, u string) string {
 	return util.ReadString(util.GuildPath("m.nick", g, u))
-}
-
-func saveNick(g string, u *dg.User, nick string) {
-	if nick == "" {
-		fmt.Println("\nNick was removed, saving username instead.")
-		nick = u.Username
-	}
-	if err := util.WriteFile(util.GuildPath("m.nick", g, u.ID), []byte(nick)); err == nil {
-		fmt.Printf("\nWritten new nick for @%s#%s: %s\n", u.Username, u.Discriminator, nick)
-	}
 }

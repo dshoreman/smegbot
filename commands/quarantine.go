@@ -11,16 +11,18 @@ func nuke(s *dg.Session, m *dg.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		u := m.Mentions[0].ID
-		err := replaceRoles(s, m.GuildID, u, sinbin)
+		err := replaceRoles(s, m.GuildID, m.ChannelID, u, sinbin)
 		sendSuccessOrFail(s, m.ChannelID, err, "add", u)
 	}
 }
 
-func replaceRoles(s *dg.Session, g string, u string, sinbin string) error {
+func replaceRoles(s *dg.Session, g string, c string, u string, sinbin string) error {
+	roles := memberRoles(s, g, u)
 	if err := s.GuildMemberRoleAdd(g, u, sinbin); err != nil {
+		fmt.Println("Could not add quarantine role", err)
 		return err
 	}
-	roles := memberRoles(s, g, u)
+	s.ChannelMessageSend(c, "Please wait while the member's roles are removed...")
 	err := util.WriteJSON(util.GuildPath("m.roles", g, u), roles)
 	if err == nil {
 		removeRoles(s, g, u, roles)
@@ -32,7 +34,7 @@ func restore(s *dg.Session, m *dg.MessageCreate) {
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		target := m.Mentions[0].ID
-		restoreRoles(s, m.GuildID, target)
+		restoreRoles(s, m.GuildID, m.ChannelID, target)
 
 		err := s.GuildMemberRoleRemove(m.GuildID, target, sinbin)
 		sendSuccessOrFail(s, m.ChannelID, err, "remove", target)
@@ -66,11 +68,12 @@ func removeRoles(s *dg.Session, g string, u string, roles []string) {
 	}
 }
 
-func restoreRoles(s *dg.Session, g string, u string) {
+func restoreRoles(s *dg.Session, g string, c string, u string) {
 	roles := make([]string, 0)
 	if util.ReadJSON(util.GuildPath("m.roles", g, u), &roles) != nil {
 		return
 	}
+	s.ChannelMessageSend(c, "Please wait, role restoration can take a while...")
 	for _, role := range roles {
 		s.GuildMemberRoleAdd(g, u, role)
 	}

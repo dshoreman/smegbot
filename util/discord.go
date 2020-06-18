@@ -52,3 +52,15 @@ func GuildPath(parts ...string) string {
 	}
 	return filepath.Join(basePath, g, f1, u, f2)
 }
+
+// SaveMemberName saves a member's username or nick when changed
+func SaveMemberName(g string, m *dg.Member) (string, error) {
+	f, name := GuildPath("m.nick", g, m.User.ID), m.Nick
+	if name == "" {
+		name = m.User.String()
+	}
+	if !FileExists(f) || ReadString(f) != name {
+		return name, WriteFile(f, []byte(name))
+	}
+	return "", nil
+}

@@ -51,11 +51,7 @@ func saveMemberNames(g *dg.Guild, nameCount int) {
 	fmt.Printf("* Updating member names (missing %d)... ", missing)
 
 	for _, m := range g.Members {
-		n, f := m.Nick, util.GuildPath("m.nick", g.ID, m.User.ID)
-		if n == "" {
-			n = m.User.String()
-		}
-		if err := util.WriteFile(f, []byte(n)); err == nil {
+		if _, err := util.SaveMemberName(g.ID, m); err == nil {
 			saved++
 		}
 	}
