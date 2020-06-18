@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * No longer displays extraneous nick-saving output when nick didn't change
 * Quarantine role no longer gets removed instantly while running .nuke
+* Members command will always show member count even if name list exceeds char limit
 
 
 ## [1.2.0] - 2020-06-13

@@ -21,14 +21,13 @@ func listRoleMembers(s *dg.Session, m *dg.MessageCreate) {
 	}
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Searching %d members...", len(members)))
-	msg := "None of the members seem to have the **@" + role.Name + "** role. :slight_frown:"
 	withRole := membersWithRole(members, role.ID)
-
-	if len(withRole) > 0 {
-		msg = fmt.Sprintf("\nThere are **%d** member(s) with the **@%s** role:\n```\n%s\n```",
-			len(withRole), role.Name, strings.Join(withRole, "\n"))
+	count := len(withRole)
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("The **@%s** role has **%d** members:", role.Name, count))
+	if count == 0 {
+		return
 	}
-	s.ChannelMessageSend(m.ChannelID, msg)
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```\n%s\n```", strings.Join(withRole, "\n")))
 }
 
 func memberHasRole(member *dg.Member, role string) bool {
