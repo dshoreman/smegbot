@@ -80,12 +80,12 @@ func restoreRoles(s *dg.Session, g string, c string, u string) {
 }
 
 func sendSuccessOrFail(s *dg.Session, channelID string, err error, mode string, target string) {
-	op, result := "adding", "now in Quarantine."
+	op, result := "add", "now in Quarantine."
 	if mode == "remove" {
-		op, result = "removing", "back out of Quarantine!"
+		op, result = "remove", "back out of Quarantine!"
 	}
 	if err != nil {
-		s.ChannelMessageSend(channelID, "Oops! Couldn't "+op+" the **@Quarantine** role.")
+		s.ChannelMessageSend(channelID, "Oops! Couldn't "+op+" the configured quarantine role. Check permissions!")
 		fmt.Println("\nError:\n", err)
 		return
 	}
