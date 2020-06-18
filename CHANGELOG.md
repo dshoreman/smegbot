@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Added
+* Quarantine role is now able to be configured per-guild
+
 ### Fixed
 * Phrasing of quarantine errors now uses correct tense
 

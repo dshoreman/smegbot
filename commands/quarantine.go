@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	dg "github.com/bwmarrin/discordgo"
+	"github.com/dshoreman/smegbot/config"
 	"github.com/dshoreman/smegbot/util"
 )
 
 func nuke(s *dg.Session, m *dg.MessageCreate) {
+	config.LoadGuild(m.GuildID)
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		u := m.Mentions[0].ID
@@ -43,6 +45,9 @@ func restore(s *dg.Session, m *dg.MessageCreate) {
 
 func quarantineRole(s *dg.Session, channelID string, guildID string) string {
 	roles, _ := s.GuildRoles(guildID)
+	if config.Guild.QuarantineRole != "" {
+		return config.Guild.QuarantineRole
+	}
 	for _, r := range roles {
 		if r.Name == "Quarantine" {
 			return r.ID
