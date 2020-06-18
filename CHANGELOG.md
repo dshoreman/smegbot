@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Changed
+* Message logs in console now include guild and channel names
+
 ### Fixed
 * No longer displays extraneous nick-saving output when nick didn't change
 * Quarantine role no longer gets removed instantly while running .nuke
