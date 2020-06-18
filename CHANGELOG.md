@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+
+
+## [1.2.1] - 2020-06-18
 ### Changed
 * Message logs in console now include guild and channel names
 
@@ -45,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Global permission checks - messages from members without Administrator are ignored
 
 
-[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.2.0...develop
+[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.2.1...develop
+[1.2.1]: https://github.com/dshoreman/smegbot/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/dshoreman/smegbot/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/dshoreman/smegbot/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/dshoreman/smegbot/compare/v1.0.0...v1.0.1
