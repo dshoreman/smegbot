@@ -8,6 +8,8 @@ import (
 type GuildConfig struct {
 	JoinChannel string `json:"channels.join"`
 	PartChannel string `json:"channels.part"`
+
+	QuarantineRole string `json:"roles.quarantine"`
 }
 
 // Guild stores a guild's configuration
