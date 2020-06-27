@@ -11,10 +11,13 @@ import (
 
 // OnMessageReceived processes incoming messages from Discord to register commands
 func OnMessageReceived(s *dg.Session, m *dg.MessageCreate) {
-	g, _ := s.State.Guild(m.GuildID)
-	c, _ := s.State.Channel(m.ChannelID)
-	fmt.Printf("[%s] @%s in #%s: %s\n",
-		g.Name, m.Author.String(), c.Name, m.Content)
+	if m.GuildID == "" {
+		fmt.Printf("[DM] @%s: %s\n", m.Author.String(), m.Content)
+	} else {
+		g, _ := s.State.Guild(m.GuildID)
+		c, _ := s.State.Channel(m.ChannelID)
+		fmt.Printf("[%s] @%s in #%s: %s\n", g.Name, m.Author.String(), c.Name, m.Content)
+	}
 
 	if m.Author.ID == s.State.User.ID {
 		return

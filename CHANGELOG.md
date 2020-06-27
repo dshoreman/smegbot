@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 * Long lists of names are now split to avoid exceeding character limits
+* Direct messages sent to the bot don't crash it any more
 
 
 ## [1.3.0] - 2020-06-18
