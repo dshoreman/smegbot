@@ -6,6 +6,13 @@ import (
 	dg "github.com/bwmarrin/discordgo"
 )
 
+// MemberCheck defines everything needed to check if a member is an admin
+type MemberCheck struct {
+	Guild  string
+	Member string
+	Root   string
+}
+
 const basePath string = "./storage/guilds"
 
 // GuildMember attemps to grab a Member from state, falling back to API if necessary
@@ -18,7 +25,12 @@ func GuildMember(s *dg.Session, g string, u string) (*dg.Member, error) {
 }
 
 // IsAdmin checks if a member has Administrator permission on any role
-func IsAdmin(s *dg.Session, g string, u string) (bool, error) {
+func IsAdmin(s *dg.Session, c MemberCheck) (bool, error) {
+	g, u := c.Guild, c.Member
+	if c.Root == u {
+		return true, nil
+	}
+
 	m, err := GuildMember(s, g, u)
 	if err != nil {
 		return false, err

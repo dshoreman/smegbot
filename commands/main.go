@@ -6,6 +6,7 @@ import (
 
 	dg "github.com/bwmarrin/discordgo"
 	"github.com/dshoreman/smegbot/cli"
+	"github.com/dshoreman/smegbot/config"
 	"github.com/dshoreman/smegbot/util"
 )
 
@@ -22,7 +23,13 @@ func OnMessageReceived(s *dg.Session, m *dg.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	if ok, _ := util.IsAdmin(s, m.GuildID, m.Author.ID); ok {
+	config.LoadGuild(m.GuildID)
+
+	if ok, _ := util.IsAdmin(s, util.MemberCheck{
+		Guild:  m.GuildID,
+		Member: m.Author.ID,
+		Root:   config.Guild.SuperUser,
+	}); ok {
 		runAll(s, m)
 	}
 }

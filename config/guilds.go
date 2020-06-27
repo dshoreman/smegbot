@@ -6,6 +6,8 @@ import (
 
 // GuildConfig defines valid guild config options
 type GuildConfig struct {
+	SuperUser string `json:"admin.user"`
+
 	JoinChannel string `json:"channels.join"`
 	PartChannel string `json:"channels.part"`
 
