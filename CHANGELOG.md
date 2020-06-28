@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Long lists of names are now split to avoid exceeding character limits
+* Invalid mentions passed to .nuke and .restore no longer cause a crash
 * Direct messages sent to the bot don't crash it any more
 
 
