@@ -9,6 +9,12 @@ import (
 )
 
 func nuke(s *dg.Session, m *dg.MessageCreate) {
+	if len(m.Mentions) != 1 {
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+			"<@%s> The nuke command requires exactly ***one*** Member mention, but you gave %d!",
+			m.Author.ID, len(m.Mentions)))
+		return
+	}
 	config.LoadGuild(m.GuildID)
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
@@ -33,6 +39,12 @@ func replaceRoles(s *dg.Session, g string, c string, u string, sinbin string) er
 }
 
 func restore(s *dg.Session, m *dg.MessageCreate) {
+	if len(m.Mentions) != 1 {
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+			"<@%s> The nuke command requires exactly ***one*** Member mention, but you gave %d!",
+			m.Author.ID, len(m.Mentions)))
+		return
+	}
 	sinbin := quarantineRole(s, m.ChannelID, m.GuildID)
 	if sinbin != "" {
 		target := m.Mentions[0].ID

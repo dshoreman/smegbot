@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"strings"
 
 	dg "github.com/bwmarrin/discordgo"
 )
@@ -24,10 +23,19 @@ func listRoleMembers(s *dg.Session, m *dg.MessageCreate) {
 	withRole := membersWithRole(members, role.ID)
 	count := len(withRole)
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("The **@%s** role has **%d** members:", role.Name, count))
+
 	if count == 0 {
 		return
 	}
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```\n%s\n```", strings.Join(withRole, "\n")))
+	output := ""
+	for _, v := range withRole {
+		if len(fmt.Sprintf("```\n%s%s\n```", output, v)) >= 2000 {
+			s.ChannelMessageSend(m.ChannelID, "```\n"+output+"```")
+			output = ""
+		}
+		output += v + "\n"
+	}
+	s.ChannelMessageSend(m.ChannelID, "```\n"+output+"```")
 }
 
 func memberHasRole(member *dg.Member, role string) bool {
