@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+
+
+## [1.4.0] - 2020-06-28
 ### Added
 * Support for a "Superuser" defined in config that can use all commands
 * Ability to define an additional "bot users" role
@@ -64,7 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Global permission checks - messages from members without Administrator are ignored
 
 
-[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.3.0...develop
+[Unreleased]: https://github.com/dshoreman/smegbot/compare/v1.4.0...develop
+[1.4.0]: https://github.com/dshoreman/smegbot/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/dshoreman/smegbot/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/dshoreman/smegbot/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/dshoreman/smegbot/compare/v1.1.0...v1.2.0
