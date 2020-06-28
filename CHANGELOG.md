@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 * Support for a "Superuser" defined in config that can use all commands
+* Ability to define an additional "bot users" role
 
 ### Fixed
 * Long lists of names are now split to avoid exceeding character limits

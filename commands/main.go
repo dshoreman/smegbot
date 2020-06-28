@@ -29,6 +29,7 @@ func OnMessageReceived(s *dg.Session, m *dg.MessageCreate) {
 		Guild:  m.GuildID,
 		Member: m.Author.ID,
 		Root:   config.Guild.SuperUser,
+		Role:   config.Guild.AdminRole,
 	}); ok {
 		runAll(s, m)
 	}

@@ -11,6 +11,7 @@ type MemberCheck struct {
 	Guild  string
 	Member string
 	Root   string
+	Role   string
 }
 
 const basePath string = "./storage/guilds"
@@ -40,7 +41,7 @@ func IsAdmin(s *dg.Session, c MemberCheck) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		if r.Permissions&dg.PermissionAdministrator != 0 {
+		if roleID == c.Role || r.Permissions&dg.PermissionAdministrator != 0 {
 			return true, nil
 		}
 	}
